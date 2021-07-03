@@ -2,7 +2,7 @@
 #include "cstr.h"
 #include "EFIMemory.h"
 #include "memory.h"
-#include "PageFrameAllocater.h"
+#include "Paging/PageFrameAllocater.h"
 
 struct BootInfo {
 

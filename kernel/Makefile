@@ -6,7 +6,8 @@ LDS = kernel.ld
 CC = x86_64-elf-g++
 LD = x86_64-elf-ld
 
-CFLAGS = -ffreestanding -fshort-wchar
+WFLAGS = -Wall -Wextra -pendatic-errors
+CFLAGS = -ffreestanding -fshort-wchar $(WFLAGS)
 LDFLAGS = -T $(LDS) -static -Bsymbolic
 
 SRCDIR := src
@@ -50,7 +51,7 @@ buildimg:
 
 .PHONY: clean
 clean:
-	rm -f lib/*
+	rm -f lib/*.o
 	rm -f bin/kernel.elf
 	rm -f bin/CustomOS.img
 
