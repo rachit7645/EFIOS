@@ -6,7 +6,7 @@ LDS = kernel.ld
 CC = x86_64-elf-g++
 LD = x86_64-elf-ld
 
-WFLAGS = -Wall -Wextra -pendatic-errors
+WFLAGS = -Wall -Wextra -pedantic-errors
 CFLAGS = -ffreestanding -fshort-wchar $(WFLAGS)
 LDFLAGS = -T $(LDS) -static -Bsymbolic
 

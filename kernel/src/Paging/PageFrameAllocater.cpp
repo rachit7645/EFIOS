@@ -5,6 +5,8 @@ uint64_t reservedMemory;
 uint64_t usedMemory;
 bool Initialized = false;
 
+PageFrameAllocater GlobalAllocator;
+
 void PageFrameAllocater::ReadEFIMemoryMap(EFI_MEMORY_DESCRIPTOR* mMap, size_t mMapSize, size_t mMapDescSize) {
 
 	if(Initialized) return;
@@ -38,7 +40,7 @@ void PageFrameAllocater::ReadEFIMemoryMap(EFI_MEMORY_DESCRIPTOR* mMap, size_t mM
 
 	LockPages(&PageBitmap, PageBitmap.Size / 4096 + 1);
 
-	for (int i = 0; i < mMapEntries; i++){
+	for (uint64_t i = 0; i < mMapEntries; i++){
         EFI_MEMORY_DESCRIPTOR* desc = (EFI_MEMORY_DESCRIPTOR*)((uint64_t)mMap + (i * mMapDescSize));
         if (desc -> type != EFI_CONVENTIONAL_MEMORY) { 
             ReservePages(desc->physAddr, desc->numPages);

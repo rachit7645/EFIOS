@@ -5,10 +5,7 @@ BasicRenderer::BasicRenderer(FrameBuffer* TargetFrameBuffer, PSF1_FONT* PSF1_Fon
 	this -> TargetFrameBuffer = TargetFrameBuffer;
 	this -> PSF1_Font = PSF1_Font;
 	this -> Colour = 0xFFFFFFFF;
-	this -> CursorPosition = (Point) {
-		X: 0,
-		Y: 0,
-	};
+	this -> CursorPosition = {0, 0};
 
 }
 

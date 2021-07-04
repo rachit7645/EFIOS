@@ -28,3 +28,5 @@ class PageFrameAllocater{
 		void ReleasePages(void* address, uint64_t pageCount);
 
 };
+
+extern PageFrameAllocater GlobalAllocator;
