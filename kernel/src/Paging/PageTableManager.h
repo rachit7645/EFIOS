@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Paging.h"
+#include "PageMapIndexer.h"
+#include "PageFrameAllocater.h"
 
 class PageTableManager {
 
