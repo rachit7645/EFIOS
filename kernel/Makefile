@@ -3,11 +3,14 @@ OSNAME = CustomOS
 GNUEFI = ../gnu-efi
 OVMFDIR = ../OVMFbin
 LDS = kernel.ld
+
 CC = x86_64-elf-g++
+AS = nasm
 LD = x86_64-elf-ld
 
 WFLAGS = -Wall -Wextra -pedantic-errors
 CFLAGS = -ffreestanding -fshort-wchar $(WFLAGS)
+ASFLAGS = 
 LDFLAGS = -T $(LDS) -static -Bsymbolic
 
 SRCDIR := src
@@ -17,8 +20,10 @@ BOOTEFI := $(GNUEFI)/x86_64/bootloader/main.efi
 
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 
-SRC = $(call rwildcard,$(SRCDIR),*.cpp)          
+SRC = $(call rwildcard,$(SRCDIR),*.cpp)
+ASM = $(call rwildcard,$(SRCDIR),*.asm)         
 OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SRC))
+OBJS += $(patsubst $(SRCDIR)/%.asm, $(OBJDIR)/%_asm.o, $(ASM))
 DIRS = $(wildcard $(SRCDIR)/*)
 
 all: kernel buildimg
@@ -29,6 +34,11 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	@ echo Compiling $^
 	@ mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $^ -o $@
+
+$(OBJDIR)/%_asm.o: $(SRCDIR)/%.asm
+	@ echo Assembling $^
+	@ mkdir -p $(@D)
+	$(AS) $(ASFLAGS) $^ -f elf64 -o $@
 
 link:
 	$(LD) $(LDFLAGS) -o $(BUILDDIR)/kernel.elf $(OBJS)
@@ -57,6 +67,7 @@ clean:
 
 .PHONY: start
 start:
+	@ echo Using $(AS) as Assembler
 	@ echo Using $(CC) as Compiler
 	@ echo Using $(LD) as Linker
 	@ echo Using $(LDS) as Linker Script
