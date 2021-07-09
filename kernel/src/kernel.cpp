@@ -5,9 +5,9 @@ extern "C" void _start(BootInfo* bootInfo) {
 	KernelInfo kernelInfo = InitializeKernel(bootInfo);
 	PageTableManager* pageTableManager = kernelInfo.pageTableManager;
 
-	BasicRenderer newRenderer = BasicRenderer(bootInfo -> framebuffer, bootInfo -> psf1_Font);
+	GlobalRenderer -> Print("Kernel Initialized Successfully");
 
-	newRenderer.Print("Kernel Initialized Successfully");
+	asm ("int $0x0E");
 
-	while (true);
-}
+	while (true) asm("hlt");
+}	
