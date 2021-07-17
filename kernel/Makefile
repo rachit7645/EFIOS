@@ -8,8 +8,8 @@ CC = x86_64-elf-g++
 AS = nasm
 LD = x86_64-elf-ld
 
-WFLAGS = -Wall -Wextra -pedantic-errors
-CFLAGS = -ffreestanding -fshort-wchar $(WFLAGS)
+WFLAGS = -Wall -Wextra -Wpedantic
+CFLAGS = -ffreestanding -fshort-wchar -mno-red-zone $(WFLAGS)
 ASFLAGS = 
 LDFLAGS = -T $(LDS) -static -Bsymbolic
 

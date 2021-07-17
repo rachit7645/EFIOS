@@ -1,6 +1,7 @@
 #include "Interrupts.h"
 #include "../Panic.h"
 #include "../IO.h"
+#include "../UserInput/Keyboard.h"
 
 INTERRUPT void PageFaultHandler(struct interrupt_frame* frame) {
 	Panic("Page Fault Detected");
@@ -17,9 +18,9 @@ INTERRUPT void GPFaultHandler(struct interrupt_frame* frame) {
 	while(true) asm("hlt");
 }
 
-INTERRUPT void KeyboardHandler(struct interrupt_frame* frame) {
-	GlobalRenderer -> Print(" Pressed");
+INTERRUPT_HANDLER void KeyboardHandler(struct interrupt_frame* frame) {
 	uint8_t scancode = inb(0x60);
+	HandleKeyboard(scancode);
 	PICEndMaster();
 }
 

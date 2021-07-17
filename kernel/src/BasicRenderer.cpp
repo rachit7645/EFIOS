@@ -11,7 +11,7 @@ BasicRenderer::BasicRenderer(FrameBuffer* TargetFrameBuffer, PSF1_FONT* PSF1_Fon
 
 }
 
-void BasicRenderer::Clear(uint32_t colour) {
+void BasicRenderer::Clear() {
 
 	uint64_t fbBase = (uint64_t) TargetFrameBuffer -> BaseAddress;
 	uint64_t bytesPerScanLine = TargetFrameBuffer -> PixelsPerScanLine * 4;
@@ -20,9 +20,37 @@ void BasicRenderer::Clear(uint32_t colour) {
 	for (size_t verticalScanLine = 0; verticalScanLine < fbHeight; verticalScanLine++) {
 		uint64_t pixPtrBase = fbBase + (bytesPerScanLine * verticalScanLine);
 		for (uint32_t* pixPtr = (uint32_t*)pixPtrBase; pixPtr < (uint32_t*)(pixPtrBase + bytesPerScanLine); pixPtr++) {
-			*pixPtr = colour;
+			*pixPtr = ClearColor;
 		}
 	}
+}
+
+void BasicRenderer::ClearChar() {
+	if (CursorPosition.X == 0) {
+		CursorPosition.X = TargetFrameBuffer -> Width;
+		CursorPosition.Y -= 18;
+		if (CursorPosition.Y < 0) CursorPosition.Y = 0;
+	}
+
+	uint32_t xOff = CursorPosition.X;
+	uint32_t yOff = CursorPosition.Y;
+
+	uint32_t* pixPtr = (uint32_t*) TargetFrameBuffer -> BaseAddress;
+
+	for(uint64_t y = yOff; y < yOff + PSF1_Font -> psf1_Header -> charsize; y++) {
+		for(uint64_t x = xOff - 8; x < xOff; x++) {
+			*(uint64_t*) (pixPtr + x + (y * TargetFrameBuffer -> PixelsPerScanLine)) = ClearColor;
+		}
+	}
+
+	CursorPosition.X -= 8;
+
+	if (CursorPosition.X < 0) {
+		CursorPosition.X = TargetFrameBuffer -> Width;
+		CursorPosition.Y -= 16;
+		if (CursorPosition.Y < 0) CursorPosition.Y = 0;
+	}
+
 }
 
 void BasicRenderer::Print(const char* str) {
@@ -31,8 +59,7 @@ void BasicRenderer::Print(const char* str) {
 	while (*chr != 0) {
 
 		if (*chr == '\n') {
-			CursorPosition.X = 0;
-			CursorPosition.Y += 18;
+			GlobalRenderer -> Next();
 			chr++;
 			continue;
 		}
@@ -63,4 +90,18 @@ void BasicRenderer::PutChar(char chr, uint32_t xOff, uint32_t yOff)
 		fontPtr++;
 	}
 
+}
+
+void BasicRenderer::PutChar(char chr) {
+	PutChar(chr, CursorPosition.X, CursorPosition.Y);
+	CursorPosition.X += 8;
+	if (CursorPosition.X + 8 > TargetFrameBuffer -> Width) {
+		CursorPosition.X = 0;
+		CursorPosition.Y += 18;	
+	}
+}
+
+void BasicRenderer::Next() {
+	CursorPosition.X = 0;
+	CursorPosition.Y += 18;
 }

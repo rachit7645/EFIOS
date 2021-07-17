@@ -4,6 +4,8 @@
 #include "cstr.h"
 #include "Paging/PageTableManager.h"
 
+#define NORETURN __attribute__((noreturn))
+
 struct BootInfo {
 
 	FrameBuffer* framebuffer;

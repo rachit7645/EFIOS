@@ -3,7 +3,8 @@
 
 void Panic(const char* panicMessage) {
 
-	GlobalRenderer -> Clear(0x000000FF);
+	GlobalRenderer -> ClearColor = 0x000000FF;
+	GlobalRenderer -> Clear();
 	GlobalRenderer -> CursorPosition = {0, 0};
 	GlobalRenderer -> Colour = 0xFFFFFFFF;
 

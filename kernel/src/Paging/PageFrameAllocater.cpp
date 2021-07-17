@@ -38,7 +38,7 @@ void PageFrameAllocater::ReadEFIMemoryMap(EFI_MEMORY_DESCRIPTOR* mMap, size_t mM
 
 	// Lock Pages
 
-	LockPages(&PageBitmap, PageBitmap.Size / 4096 + 1);
+	LockPages(PageBitmap.Buffer, PageBitmap.Size / 4096 + 1);
 
 	// Reserve Pages of Unusable / Reserved memory
 
