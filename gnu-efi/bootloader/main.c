@@ -241,24 +241,14 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 	UINTN DescriptorSize;
 	UINT32 DescriptorVersion;
 	{
-
 		SystemTable -> BootServices -> GetMemoryMap(&MapSize, Map, &MapKey, &DescriptorSize, &DescriptorVersion);
 		SystemTable -> BootServices -> AllocatePool(EfiLoaderData, MapSize, (void**)&Map);
 		SystemTable -> BootServices -> GetMemoryMap(&MapSize, Map, &MapKey, &DescriptorSize, &DescriptorVersion);
-
 	}
 
 	void (*KernelStart) (BootInfo*) = ((__attribute__((sysv_abi)) void (*)(BootInfo*) ) header.e_entry);
 
-	BootInfo bootInfo = (BootInfo) {
-		
-		framebuffer: newBuffer,
-		psf1_Font: newFont,
-		mMap: Map,
-		mMapSize: MapSize,
-		mMapDescriptorSize: DescriptorSize,
-
-	};
+	BootInfo bootInfo = {newBuffer, newFont, Map, MapSize, DescriptorSize};
 
 	SystemTable -> BootServices -> ExitBootServices(ImageHandle, MapKey);
 

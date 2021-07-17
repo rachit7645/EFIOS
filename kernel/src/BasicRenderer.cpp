@@ -11,6 +11,20 @@ BasicRenderer::BasicRenderer(FrameBuffer* TargetFrameBuffer, PSF1_FONT* PSF1_Fon
 
 }
 
+void BasicRenderer::Clear(uint32_t colour) {
+
+	uint64_t fbBase = (uint64_t) TargetFrameBuffer -> BaseAddress;
+	uint64_t bytesPerScanLine = TargetFrameBuffer -> PixelsPerScanLine * 4;
+	uint64_t fbHeight = TargetFrameBuffer -> Height;
+
+	for (size_t verticalScanLine = 0; verticalScanLine < fbHeight; verticalScanLine++) {
+		uint64_t pixPtrBase = fbBase + (bytesPerScanLine * verticalScanLine);
+		for (uint32_t* pixPtr = (uint32_t*)pixPtrBase; pixPtr < (uint32_t*)(pixPtrBase + bytesPerScanLine); pixPtr++) {
+			*pixPtr = colour;
+		}
+	}
+}
+
 void BasicRenderer::Print(const char* str) {
 
 	char* chr = (char*)str;

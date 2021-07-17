@@ -17,6 +17,7 @@ class BasicRenderer {
 
 		void Print(const char* str);
 		void PutChar(char chr, uint32_t xOff, uint32_t yOff);
+		void Clear(uint32_t colour);
 
 };
 
