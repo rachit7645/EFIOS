@@ -1,11 +1,13 @@
 #include "IDT.h"
 
+// Setter to set the offset of the IDTDescEntry
 void IDTDescEntry::SetOffset(uint64_t offset) {
 	offset0 = (uint16_t) (offset & 0x000000000000FFFF);
 	offset1 = (uint16_t) ((offset & 0x00000000FFFF0000) >> 16);
 	offset2 = (uint32_t) ((offset & 0xFFFFFFFF00000000) >> 32);
 }
 
+// Getter to get the offset of the IDTDescEntry
 uint64_t IDTDescEntry::GetOffset() {
 	uint64_t offset = 0;
 	offset |= (uint64_t) offset0;

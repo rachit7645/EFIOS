@@ -2,6 +2,7 @@ bits 64
 
 global LoadGDT
 
+; This loads the GDT and then nullifys the data segment registers
 LoadGDT:
 	lgdt 	[rdi]
 	

@@ -2,8 +2,7 @@
 
 BasicRenderer* GlobalRenderer;
 
-BasicRenderer::BasicRenderer(FrameBuffer* TargetFrameBuffer, PSF1_FONT* PSF1_Font) 
-{
+BasicRenderer::BasicRenderer(FrameBuffer* TargetFrameBuffer, PSF1_FONT* PSF1_Font) {
 	this -> TargetFrameBuffer = TargetFrameBuffer;
 	this -> PSF1_Font = PSF1_Font;
 	this -> Colour = 0xFFFFFFFF;
@@ -75,8 +74,7 @@ void BasicRenderer::Print(const char* str) {
 
 }
 
-void BasicRenderer::PutChar(char chr, uint32_t xOff, uint32_t yOff)
-{
+void BasicRenderer::PutChar(char chr, uint32_t xOff, uint32_t yOff) {
 
 	uint32_t* pixPtr = (uint32_t*) TargetFrameBuffer -> BaseAddress;
 	char* fontPtr = (char*)PSF1_Font -> glyphBuffer + (chr * PSF1_Font -> psf1_Header -> charsize);
