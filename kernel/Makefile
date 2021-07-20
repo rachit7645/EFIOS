@@ -18,7 +18,18 @@ OBJDIR := lib
 BUILDDIR = bin
 BOOTEFI := $(GNUEFI)/x86_64/bootloader/main.efi
 
-rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
+NO_COL  := \033[0m
+RED     := \033[0;31m
+GREEN   := \033[0;32m
+BLUE    := \033[0;34m
+YELLOW  := \033[0;33m
+BLINK   := \033[33;5m
+
+rwildcard = $(foreach d, $(wildcard $(1:=/*)), $(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
+
+define print
+  @ printf "$(GREEN)$(1) $(YELLOW)$(2)$(GREEN) -> $(BLUE)$(3)$(BLUE)\n"
+endef
 
 SRC = $(call rwildcard,$(SRCDIR),*.cpp)
 ASM = $(call rwildcard,$(SRCDIR),*.asm)         
@@ -31,21 +42,22 @@ all: kernel buildimg
 kernel: start $(OBJS) link
 
 $(OBJDIR)/Interrupts/Interrupts.o : $(SRCDIR)/Interrupts/Interrupts.cpp
-	@ echo Compiling $^
+	@ $(call print,Compiling:,$<,$@)
 	@ mkdir -p $(@D)
 	$(CC) -mno-red-zone -mgeneral-regs-only -ffreestanding -c $^ -o $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-	@ echo Compiling $^
+	@ $(call print,Compiling:,$<,$@)
 	@ mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $^ -o $@
 
 $(OBJDIR)/%_asm.o: $(SRCDIR)/%.asm
-	@ echo Assembling $^
+	@ $(call print,Assembling:,$<,$@)
 	@ mkdir -p $(@D)
 	$(AS) $(ASFLAGS) $^ -f elf64 -o $@
 
 link:
+	@ printf "$(GREEN)Linking $(YELLOW)kernel.elf$(BLUE)\n"
 	$(LD) $(LDFLAGS) -o $(BUILDDIR)/kernel.elf $(OBJS)
 
 setup:
@@ -54,7 +66,7 @@ setup:
 	@ mkdir $(OBJDIR)
 
 buildimg:
-	@ echo Building $(BUILDDIR)/$(OSNAME).img
+	@ printf "$(GREEN)Building $(BUILDDIR)/$(OSNAME).img$(BLUE)\n"
 	dd if=/dev/zero of=$(BUILDDIR)/$(OSNAME).img bs=512 count=93750
 	mformat -i $(BUILDDIR)/$(OSNAME).img -f 2880 ::
 	mmd -i $(BUILDDIR)/$(OSNAME).img ::/EFI
@@ -64,18 +76,17 @@ buildimg:
 	mcopy -i $(BUILDDIR)/$(OSNAME).img $(BUILDDIR)/kernel.elf ::
 	mcopy -i $(BUILDDIR)/$(OSNAME).img $(BUILDDIR)/zap-light18.psf ::
 
-.PHONY: clean
+.PHONY: clean start
 clean:
 	rm -f lib/*.o
 	rm -f bin/kernel.elf
 	rm -f bin/CustomOS.img
 
-.PHONY: start
 start:
-	@ echo Using $(AS) as Assembler
-	@ echo Using $(CC) as Compiler
-	@ echo Using $(LD) as Linker
-	@ echo Using $(LDS) as Linker Script
+	@ printf "$(YELLOW)Using $(AS) as Assembler\n"
+	@ printf "Using $(CC) as Compiler\n"
+	@ printf "Using $(LD) as Linker\n"
+	@ printf "Using $(LDS) as Linker Script$(BLUE)\n"
 
 run:
 	qemu-system-x86_64 -drive file=$(BUILDDIR)/$(OSNAME).img -m 256M -cpu qemu64 -drive if=pflash,format=raw,unit=0,file="$(OVMFDIR)/OVMF_CODE-pure-efi.fd",readonly=on -drive if=pflash,format=raw,unit=1,file="$(OVMFDIR)/OVMF_VARS-pure-efi.fd" -net none

@@ -2,10 +2,14 @@
 
 #include "../BasicRenderer.h"
 
+// Attributes for interrupts
+
 #define INTERRUPT_HANDLER 	__attribute__((interrupt))
 #define NORETURN 			__attribute__((noreturn))
 
 #define INTERRUPT INTERRUPT_HANDLER NORETURN
+
+// PIC Defines
 
 #define PIC1_COMMAND	0x20
 #define PIC1_DATA		0x21
@@ -20,11 +24,17 @@
 
 struct interrupt_frame;
 
+// Exceptions Handlers
+
 INTERRUPT void PageFaultHandler(struct interrupt_frame* frame);
 INTERRUPT void DoubleFaultHandler(struct interrupt_frame* frame);
 INTERRUPT void GPFaultHandler(struct interrupt_frame* frame);
 
+// Maskable Interrupt Handlers
+
 INTERRUPT_HANDLER void KeyboardHandler(struct interrupt_frame* frame);
+
+// PIC Functions
 
 void RemapPIC();
 void PICEndMaster();
