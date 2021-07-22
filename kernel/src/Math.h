@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-struct Point{
+struct Point {
 
 	long X;
 	long Y;
